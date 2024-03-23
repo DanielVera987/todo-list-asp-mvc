@@ -1,7 +1,17 @@
+using Microsoft.EntityFrameworkCore;
+using TodoList.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<ApplicationDbContext>(option => 
+  option.UseMySql(
+    builder.Configuration.GetConnectionString("connection"),
+    Microsoft.EntityFrameworkCore.ServerVersion.Parse("5.7.39-mysql")
+  )
+);
 
 var app = builder.Build();
 
