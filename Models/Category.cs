@@ -7,13 +7,15 @@ public partial class Category
 {
     public uint Id { get; set; }
 
-    public uint ParentId { get; set; }
+    public uint? ParentId { get; set; }
 
     public string Name { get; set; } = null!;
 
-    public string Description { get; set; } = null!;
+    public string? Description { get; set; }
 
     public string? Color { get; set; }
+
+    public bool? Deletable { get; set; }
 
     public DateTime? Created { get; set; }
 
@@ -21,7 +23,7 @@ public partial class Category
 
     public virtual ICollection<Category> InverseParent { get; set; } = new List<Category>();
 
-    public virtual Category Parent { get; set; } = null!;
+    public virtual Category? Parent { get; set; }
 
     public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
 }

@@ -11,7 +11,7 @@ public partial class Task
 
     public string Title { get; set; } = null!;
 
-    public string Description { get; set; } = null!;
+    public string? Description { get; set; }
 
     public DateTime? StartDate { get; set; }
 

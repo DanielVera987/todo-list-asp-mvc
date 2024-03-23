@@ -45,6 +45,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp")
                 .HasColumnName("created");
+            entity.Property(e => e.Deletable).HasColumnName("deletable");
             entity.Property(e => e.Description)
                 .HasColumnType("text")
                 .HasColumnName("description");
@@ -61,6 +62,7 @@ public partial class ApplicationDbContext : DbContext
 
             entity.HasOne(d => d.Parent).WithMany(p => p.InverseParent)
                 .HasForeignKey(d => d.ParentId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Parent_Categories");
         });
 
