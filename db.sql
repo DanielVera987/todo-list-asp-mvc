@@ -16,6 +16,7 @@ CREATE TABLE `categories` (
         FOREIGN KEY (`parent_id`) 
         REFERENCES `categories` (`id`)
         ON DELETE CASCADE
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE `tasks` (
@@ -31,7 +32,8 @@ CREATE TABLE `tasks` (
     CONSTRAINT `FK_Task_Has_Category`
         FOREIGN KEY (`category_id`)
         REFERENCES `categories` (`id`)
-        ON DELETE CASCADE
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 
