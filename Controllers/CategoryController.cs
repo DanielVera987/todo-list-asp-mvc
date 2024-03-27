@@ -41,4 +41,29 @@ public class CategoryController : Controller
 
     return RedirectToAction(nameof(Index));
   }
+
+  [HttpGet]
+  public async Task<IActionResult> Edit(uint? id)
+  {
+    if (id == null) return NotFound();
+
+    Category category = await _context.Categories.FindAsync(id);
+    List<Category> parents = await _context.Categories.Where(c => c.ParentId == null).ToListAsync();
+    ViewBag.Parents = parents;
+
+    if (category == null) return NotFound();
+
+    return View(category);
+  }
+
+  [HttpPost]
+  public async Task<IActionResult> Edit(Category category)
+  {
+    if (category == null) return NotFound();
+
+    _context.Categories.Update(category);
+    await _context.SaveChangesAsync();
+
+    return RedirectToAction(nameof(Index));
+  }
 }
