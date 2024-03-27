@@ -83,6 +83,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
+    [Route("tarea/editar/{id}")]
     public async Task<IActionResult> Edit(uint id, ViewModelTask model) {
       if (ModelState.IsValid) {
         var task = new TodoList.Models.Task(){
