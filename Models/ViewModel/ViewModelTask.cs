@@ -24,4 +24,5 @@ public class ViewModelTask
 
     [DataType(DataType.Date)]
     public DateTime? EndDate { get; set; }
+    public virtual Category Category { get; set; } = null!;
 }

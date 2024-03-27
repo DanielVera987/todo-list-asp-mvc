@@ -22,7 +22,22 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
       var tasks = await _context.Tasks.Include(c => c.Category).ToListAsync();
-      return View(tasks);
+      var viewModel = new List<ViewModelTask>();
+
+      foreach (var task in tasks) {
+        ViewModelTask viewModelTask = new ViewModelTask{
+          Title = task.Title,
+          CategoryId = task.CategoryId,
+          Description = task.Description,
+          StartDate = task.StartDate,
+          EndDate = task.EndDate,
+          Category = task.Category
+        };
+
+        viewModel.Add(viewModelTask);
+      }
+
+      return View(viewModel);
     }
 
     [HttpGet]
