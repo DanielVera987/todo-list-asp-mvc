@@ -7,11 +7,6 @@ using TodoList.Models.ViewModel;
 
 namespace TodoList.Controllers;
 
-/*
-  TODO
-  * Agregar validaciones, ViewModelHome
-*/
-
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
