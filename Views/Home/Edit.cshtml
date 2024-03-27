@@ -1,0 +1,53 @@
+@using TodoList.Models.ViewModel
+@model ViewModelTask
+@{
+  ViewData["Title"] = "Editar tarea";
+}
+
+<h1>
+  Editar <mark>@Model.Title </mark>
+</h1>
+
+@using (Html.BeginForm("Edit", "Home", FormMethod.Post)) 
+{
+  <div class="mb-3">
+    <label asp-for="Title" class="control-label"></label>
+    <input asp-for="Title" class="form-control">
+    <span asp-validation-for="Title" class="text-danger"></span>
+  </div>
+
+  <div class="mb-3">
+    <label asp-for="Description" class="form-label"></label>
+    <textarea asp-for="Description" class="form-control"></textarea>
+    <span asp-validation-for="Description" class="text-danger"></span>
+  </div>
+
+  <div class="mb-3">
+    <label asp-for="CategoryId" class="form-label"></label>
+    <select asp-for="CategoryId" class="form-control">
+      <option value="" disabled selected>Selecciona una categoria</option>
+      @foreach(var category in ViewBag.Categories) {
+        <option value="@category.Id">@category.Name</option>
+      }
+    </select>
+    <span asp-validation-for="CategoryId" class="text-danger"></span>
+  </div>
+
+  <div class="mb-3">
+    <label asp-for="StartDate" class="form-label"></label>
+    <input type="date" asp-for="@Model.StartDate" class="form-control">
+  </div>
+
+  <div class="mb-3">
+    <label asp-for="EndDate" class="form-label"></label>
+    <input type="date" asp-for="@Model.EndDate" class="form-control">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Editar</button>
+}
+
+@section Scripts{
+  @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+  }
+}
