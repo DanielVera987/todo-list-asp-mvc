@@ -1,0 +1,45 @@
+@model TodoList.Models.Category
+@{
+    ViewData["Title"] = "Nueva categoria";
+}
+
+@using (Html.BeginForm("Create", "Category", FormMethod.Post))
+{
+  <div class="mb-3">
+    <label asp-for="Name" class="control-label"></label>
+    <input asp-for="Name" class="form-control">
+    <span asp-validation-for="Name" class="text-danger"></span>
+  </div>
+
+  <div class="mb-3">
+    <label asp-for="ParentId" class="control-label"></label>
+    <select asp-for="ParentId" class="form-control">
+      <option disabled selected>Le pertenece a</option>
+      @foreach(var parent in ViewBag.Parents)
+      {
+        <option value="@parent.Id">@parent.Name</option>
+      }
+    </select>
+    <span asp-validation-for="ParentId" class="text-danger"></span>
+  </div>
+
+  <div class="mb-3">
+    <label asp-for="Description" class="control-label"></label>
+    <textarea asp-for="Description" class="form-control"></textarea>
+    <span asp-validation-for="Description" class="text-danger"></span>
+  </div>
+
+  <div class="mb-3">
+    <label asp-for="Color" class="control-label"></label>
+    <input type="color" asp-for="Color" class="form-control">
+    <span asp-validation-for="Color" class="text-danger"></span>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Guardar</button>
+}
+
+@section Scripts{
+  @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+  }
+}
