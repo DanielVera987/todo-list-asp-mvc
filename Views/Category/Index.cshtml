@@ -1,0 +1,32 @@
+@model List<TodoList.Models.Category>
+@{
+  ViewData["Title"] = "Categorias";
+}
+
+<div class="w-100 d-flex justify-content-end mb-5">
+  @* @Html.ActionLink("Nueva Tarea", "Create", "Home", null, new { @class = "btn btn-success" }) *@
+</div>
+
+<table class="table table-striped">
+  <thead>
+    <th>Nombre</th>
+    <th>Categoría</th>
+    <th>Fecha inicio</th>
+    <th>Fecha limite</th>
+    <th></th>
+  </thead>
+  <tbody>
+    @foreach (var category in Model) {
+      <tr>
+        <td>@Html.DisplayFor(model => category.Name)</td>
+        <td>@Html.DisplayFor(model => category.Parent.Name)</td>
+        <td>@Html.DisplayFor(model => category.Color)</td>
+        <td>
+          @Html.ActionLink("Editar", "Edit", new { id = category.Id })
+          | 
+          @Html.ActionLink("Eliminar", "Delete", new { Id = category.Id })
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
