@@ -6,7 +6,6 @@ namespace TodoList.Models;
 
 public partial class Task
 {
-    [Key]
     public uint Id { get; set; }
 
     public uint CategoryId { get; set; }

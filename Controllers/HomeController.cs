@@ -26,6 +26,7 @@ public class HomeController : Controller
 
       foreach (var task in tasks) {
         ViewModelTask viewModelTask = new ViewModelTask{
+          Id = task.Id,
           Title = task.Title,
           CategoryId = task.CategoryId,
           Description = task.Description,
@@ -50,20 +51,21 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> Create(ViewModelTask model)
     {
-      if (ModelState.IsValid) {
-        var task = new TodoList.Models.Task
-        {
-          Id = model.Id,
-          CategoryId = model.CategoryId,
-          Title = model.Title,
-          Description = model.Description,
-          StartDate = model.StartDate,
-          EndDate = model.EndDate
-        };
-
-        _context.Tasks.Add(task);
-        await _context.SaveChangesAsync();
+      if (model == null) {
+        return NotFound();
       }
+
+      var task = new TodoList.Models.Task
+      {
+        CategoryId = model.CategoryId,
+        Title = model.Title,
+        Description = model.Description,
+        StartDate = model.StartDate,
+        EndDate = model.EndDate
+      };
+
+      _context.Tasks.Add(task);
+      await _context.SaveChangesAsync();
 
       return RedirectToAction(nameof(Index));
     }
@@ -95,19 +97,21 @@ public class HomeController : Controller
     [HttpPost]
     [Route("tarea/editar/{id}")]
     public async Task<IActionResult> Edit(uint id, ViewModelTask model) {
-      if (ModelState.IsValid) {
-        var task = new TodoList.Models.Task(){
-          Id = model.Id,
-          CategoryId = model.CategoryId,
-          Title = model.Title,
-          Description = model.Description,
-          StartDate = model.StartDate,
-          EndDate = model.EndDate
-        };
-
-        _context.Tasks.Update(task);
-        await _context.SaveChangesAsync();
+      if (model == null) {
+        return NotFound();
       }
+
+      var task = new TodoList.Models.Task(){
+        Id = model.Id,
+        CategoryId = model.CategoryId,
+        Title = model.Title,
+        Description = model.Description,
+        StartDate = model.StartDate,
+        EndDate = model.EndDate
+      };
+
+      _context.Tasks.Update(task);
+      await _context.SaveChangesAsync();
 
       return RedirectToAction(nameof(Index));
     }
