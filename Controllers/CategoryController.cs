@@ -66,4 +66,15 @@ public class CategoryController : Controller
 
     return RedirectToAction(nameof(Index));
   }
+
+  [HttpGet]
+  public async Task<IActionResult> Delete(Category category)
+  {
+    if (category == null) return NotFound();
+
+    _context.Categories.Remove(category);
+    await _context.SaveChangesAsync();
+
+    return RedirectToAction(nameof(Index));
+  }
 }
