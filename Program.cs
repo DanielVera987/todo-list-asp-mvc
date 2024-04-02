@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using ModelTask = TodoList.Models.Task;
+using TodoList.Models.ViewModel;
 using TodoList.Models;
+using TodoList.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +15,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
     Microsoft.EntityFrameworkCore.ServerVersion.Parse("5.7.39-mysql")
   )
 );
+
+// Repository
+builder.Services.AddScoped<IRepository<ModelTask>, TaskRepository>();
 
 var app = builder.Build();
 

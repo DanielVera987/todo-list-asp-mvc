@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using TodoList.Models;
 using TodoList.Models.ViewModel;
+using TodoList.Repository;
+using ModelTask = TodoList.Models.Task;
 
 namespace TodoList.Controllers;
 
@@ -11,17 +13,19 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private ApplicationDbContext _context;
+    private IRepository<ModelTask> _repository;
 
-    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IRepository<ModelTask> repository)
     {
         _logger = logger;
         _context = context;
+        _repository = repository;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-      var tasks = await _context.Tasks.Include(c => c.Category).ToListAsync();
+      var tasks = await _repository.GetAll();
       var viewModel = new List<ViewModelTask>();
 
       foreach (var task in tasks) {
@@ -64,8 +68,7 @@ public class HomeController : Controller
         EndDate = model.EndDate
       };
 
-      _context.Tasks.Add(task);
-      await _context.SaveChangesAsync();
+      await _repository.Save(task);
 
       return RedirectToAction(nameof(Index));
     }
@@ -74,7 +77,7 @@ public class HomeController : Controller
     [Route("tarea/editar/{id}")]
     public async Task<IActionResult> Edit(uint id)
     {
-      var task = await _context.Tasks.FindAsync(id);
+      var task = await _repository.Find(id);
 
       if (task == null) {
         Response.StatusCode = 404;
@@ -110,22 +113,20 @@ public class HomeController : Controller
         EndDate = model.EndDate
       };
 
-      _context.Tasks.Update(task);
-      await _context.SaveChangesAsync();
+      await _repository.Update(task);
 
       return RedirectToAction(nameof(Index));
     }
 
     [HttpGet]
-    public async Task<IActionResult> Delete(uint? Id)
+    public async Task<IActionResult> Delete(uint Id)
     {
       if (Id == null) {
         return NotFound();
       }
 
-      var task = await _context.Tasks.FindAsync(Id);
-      _context.Tasks.Remove(task);
-      await _context.SaveChangesAsync();
+      var task = await _repository.Find(Id);
+      _repository.Delete(task);
 
       return RedirectToAction(nameof(Index));
     }
