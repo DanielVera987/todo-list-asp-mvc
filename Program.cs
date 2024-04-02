@@ -17,7 +17,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 );
 
 // Repository
-builder.Services.AddScoped<IRepository<ModelTask>, TaskRepository>();
+builder.Services.AddScoped<ITaskRepository<ModelTask>, TaskRepository>();
+builder.Services.AddScoped<ICategoryRepository<Category>, CategoryRepository>();
 
 var app = builder.Build();
 

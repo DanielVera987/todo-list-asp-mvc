@@ -5,7 +5,7 @@ using ModelTask = TodoList.Models.Task;
 
 namespace TodoList.Repository;
 
-class TaskRepository : IRepository<ModelTask>
+class TaskRepository : ITaskRepository<ModelTask>
 {
   private ApplicationDbContext _context;
 
@@ -18,6 +18,11 @@ class TaskRepository : IRepository<ModelTask>
 
   public async Task<IEnumerable<ModelTask>> GetAll() =>
     await _context.Tasks.ToListAsync();
+
+  public async Task<IEnumerable<ModelTask>> GetIncludes()
+  {
+    return await _context.Tasks.Include(p => p.Category).ToListAsync();
+  }
 
   public async Task<IEnumerable<ModelTask>> GetAllWithRelationship() =>
     await _context.Tasks.Include(p => p.Category).ToListAsync();

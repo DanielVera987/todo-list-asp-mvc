@@ -12,20 +12,24 @@ namespace TodoList.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private ApplicationDbContext _context;
-    private IRepository<ModelTask> _repository;
+    private ITaskRepository<ModelTask> _repository;
+    private ICategoryRepository<Category> _categoryRepository;
 
-    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, IRepository<ModelTask> repository)
+    public HomeController(
+      ILogger<HomeController> logger, 
+      ITaskRepository<ModelTask> repository,
+      ICategoryRepository<Category> categoryRepository  
+    )
     {
         _logger = logger;
-        _context = context;
         _repository = repository;
+        _categoryRepository = categoryRepository;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-      var tasks = await _repository.GetAll();
+      var tasks = await _repository.GetIncludes();
       var viewModel = new List<ViewModelTask>();
 
       foreach (var task in tasks) {
@@ -48,7 +52,7 @@ public class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> Create()
     {
-      ViewBag.Categories = await _context.Categories.ToListAsync();
+      ViewBag.Categories = await _categoryRepository.GetAll();
       return View();
     }
 
@@ -92,14 +96,14 @@ public class HomeController : Controller
         EndDate = task.EndDate
       };
 
-      ViewData["Categories"] = await _context.Categories.ToListAsync();
+      ViewData["Categories"] = await _categoryRepository.GetAll();
 
       return View(viewModel);
     }
 
     [HttpPost]
     [Route("tarea/editar/{id}")]
-    public async Task<IActionResult> Edit(uint id, ViewModelTask model) {
+    public async Task<IActionResult> Edit(uint? id, ViewModelTask model) {
       if (model == null) {
         return NotFound();
       }
