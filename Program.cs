@@ -3,6 +3,7 @@ using ModelTask = TodoList.Models.Task;
 using TodoList.Models.ViewModel;
 using TodoList.Models;
 using TodoList.Repository;
+using TodoList.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 // Repository
 builder.Services.AddScoped<ITaskRepository<ModelTask>, TaskRepository>();
 builder.Services.AddScoped<ICategoryRepository<Category>, CategoryRepository>();
+builder.Services.AddScoped<IService<ViewModelTask>, TaskService>();
 
 var app = builder.Build();
 

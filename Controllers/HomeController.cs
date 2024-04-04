@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using TodoList.Models;
 using TodoList.Models.ViewModel;
 using TodoList.Repository;
+using TodoList.Service;
 using ModelTask = TodoList.Models.Task;
 
 namespace TodoList.Controllers;
@@ -14,65 +15,41 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private ITaskRepository<ModelTask> _repository;
     private ICategoryRepository<Category> _categoryRepository;
+    private IService<ViewModelTask> _service;
 
     public HomeController(
       ILogger<HomeController> logger, 
       ITaskRepository<ModelTask> repository,
-      ICategoryRepository<Category> categoryRepository  
+      ICategoryRepository<Category> categoryRepository,
+      IService<ViewModelTask> service
     )
     {
         _logger = logger;
         _repository = repository;
         _categoryRepository = categoryRepository;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-      var tasks = await _repository.GetIncludes();
-      var viewModel = new List<ViewModelTask>();
-
-      foreach (var task in tasks) {
-        ViewModelTask viewModelTask = new ViewModelTask{
-          Id = task.Id,
-          Title = task.Title,
-          CategoryId = task.CategoryId,
-          Description = task.Description,
-          StartDate = task.StartDate,
-          EndDate = task.EndDate,
-          Category = task.Category
-        };
-
-        viewModel.Add(viewModelTask);
-      }
-
+      var viewModel = await _service.Index();
       return View(viewModel);
     }
 
     [HttpGet]
     public async Task<IActionResult> Create()
     {
-      ViewBag.Categories = await _categoryRepository.GetAll();
+      var categories = await _service.Create();
+      ViewBag.Categories = categories;
       return View();
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(ViewModelTask model)
     {
-      if (model == null) {
-        return NotFound();
-      }
-
-      var task = new TodoList.Models.Task
-      {
-        CategoryId = model.CategoryId,
-        Title = model.Title,
-        Description = model.Description,
-        StartDate = model.StartDate,
-        EndDate = model.EndDate
-      };
-
-      await _repository.Save(task);
+      var task = await _service.Create(model);
+      if (task == null) return NotFound();
 
       return RedirectToAction(nameof(Index));
     }
@@ -81,20 +58,7 @@ public class HomeController : Controller
     [Route("tarea/editar/{id}")]
     public async Task<IActionResult> Edit(uint id)
     {
-      var task = await _repository.Find(id);
-
-      if (task == null) {
-        Response.StatusCode = 404;
-        return NotFound();
-      }
-
-      var viewModel = new ViewModelTask{
-        Title = task.Title,
-        CategoryId = task.CategoryId,
-        Description = task.Description,
-        StartDate = task.StartDate,
-        EndDate = task.EndDate
-      };
+      var viewModel = await _service.Edit(id);
 
       ViewData["Categories"] = await _categoryRepository.GetAll();
 
@@ -104,33 +68,23 @@ public class HomeController : Controller
     [HttpPost]
     [Route("tarea/editar/{id}")]
     public async Task<IActionResult> Edit(uint? id, ViewModelTask model) {
-      if (model == null) {
+      var task = await _service.Edit(model);
+      
+      if (task == null) {
         return NotFound();
       }
-
-      var task = new TodoList.Models.Task(){
-        Id = model.Id,
-        CategoryId = model.CategoryId,
-        Title = model.Title,
-        Description = model.Description,
-        StartDate = model.StartDate,
-        EndDate = model.EndDate
-      };
-
-      await _repository.Update(task);
 
       return RedirectToAction(nameof(Index));
     }
 
     [HttpGet]
-    public async Task<IActionResult> Delete(uint Id)
+    public async Task<IActionResult> Delete(uint id)
     {
-      if (Id == null) {
+      var task = await _service.Delete(id);
+
+      if (task == null) {
         return NotFound();
       }
-
-      var task = await _repository.Find(Id);
-      _repository.Delete(task);
 
       return RedirectToAction(nameof(Index));
     }
