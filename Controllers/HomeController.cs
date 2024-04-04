@@ -13,19 +13,16 @@ namespace TodoList.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private ITaskRepository<ModelTask> _repository;
     private ICategoryRepository<Category> _categoryRepository;
     private IService<ViewModelTask> _service;
 
     public HomeController(
       ILogger<HomeController> logger, 
-      ITaskRepository<ModelTask> repository,
       ICategoryRepository<Category> categoryRepository,
       IService<ViewModelTask> service
     )
     {
         _logger = logger;
-        _repository = repository;
         _categoryRepository = categoryRepository;
         _service = service;
     }
@@ -59,6 +56,8 @@ public class HomeController : Controller
     public async Task<IActionResult> Edit(uint id)
     {
       var viewModel = await _service.Edit(id);
+
+      if (viewModel == null) return NotFound();
 
       ViewData["Categories"] = await _categoryRepository.GetAll();
 
