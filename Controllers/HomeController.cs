@@ -4,26 +4,24 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using TodoList.Models;
 using TodoList.Models.ViewModel;
-using TodoList.Repository;
 using TodoList.Service;
-using ModelTask = TodoList.Models.Task;
 
 namespace TodoList.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private ICategoryRepository<Category> _categoryRepository;
+    private ICategoryService<Category> _categoryService;
     private IService<ViewModelTask> _service;
 
     public HomeController(
       ILogger<HomeController> logger, 
-      ICategoryRepository<Category> categoryRepository,
+      ICategoryService<Category> categoryService,
       IService<ViewModelTask> service
     )
     {
         _logger = logger;
-        _categoryRepository = categoryRepository;
+        _categoryService = categoryService;
         _service = service;
     }
 
@@ -59,7 +57,7 @@ public class HomeController : Controller
 
       if (viewModel == null) return NotFound();
 
-      ViewData["Categories"] = await _categoryRepository.GetAll();
+      ViewData["Categories"] = await _categoryService.List();
 
       return View(viewModel);
     }

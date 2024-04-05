@@ -2,29 +2,30 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoList.Models;
 using TodoList.Repository;
+using TodoList.Service;
 
 namespace TodoList.Controllers;
 
 public class CategoryController : Controller
 {
-  private ICategoryRepository<Category> _repository;
+  private ICategoryService<Category> _service;
 
-  public CategoryController(ICategoryRepository<Category> repository)
+  public CategoryController(ICategoryService<Category> service)
   {
-    _repository = repository;
+    _service = service;
   }
 
   [HttpGet]
   public async Task<IActionResult> Index()
   {
-    var categories = await _repository.GetAll(); 
+    var categories = await _service.Index(); 
     return View(categories);
   }
 
   [HttpGet]
   public async Task<IActionResult> Create()
   {
-    var parents = await _repository.GetParents();
+    var parents = await _service.Create();
     ViewBag.Parents = parents;
     return View();
   }
@@ -34,7 +35,7 @@ public class CategoryController : Controller
   {
     if (category == null) return NotFound();
 
-    await _repository.Save(category);
+    await _service.Create(category);
 
     return RedirectToAction(nameof(Index));
   }
@@ -44,8 +45,8 @@ public class CategoryController : Controller
   {
     if (id == null) return NotFound();
 
-    Category category = await _repository.Find(id);
-    var parents = await _repository.GetParents();
+    Category category = await _service.Edit(id);
+    var parents = await _service.GetParents();
     ViewBag.Parents = parents;
 
     if (category == null) return NotFound();
@@ -58,7 +59,7 @@ public class CategoryController : Controller
   {
     if (category == null) return NotFound();
 
-    await _repository.Update(category);
+    await _service.Edit(category);
 
     return RedirectToAction(nameof(Index));
   }
@@ -68,7 +69,7 @@ public class CategoryController : Controller
   {
     if (category == null) return NotFound();
 
-    await _repository.Delete(category);
+    await _service.Delete(category.Id);
 
     return RedirectToAction(nameof(Index));
   }
