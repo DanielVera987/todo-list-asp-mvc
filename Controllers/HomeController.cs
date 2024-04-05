@@ -28,6 +28,9 @@ public class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
+      var categories = await _categoryService.GetWithTask();
+      ViewBag.CategoriesWithTask = categories;
+      
       var viewModel = await _service.Index();
       return View(viewModel);
     }

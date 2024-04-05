@@ -27,6 +27,11 @@ public class CategoryService : ICategoryService<Category>
     return await _repository.GetParents();
   }
 
+  public async Task<IEnumerable<Category>> GetWithTask()
+  {
+    return await _repository.GetWithTask();
+  }
+
   public async Task<dynamic> Create()
   {
     return await this.GetParents();

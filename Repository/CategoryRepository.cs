@@ -18,6 +18,11 @@ public class CategoryRepository : ICategoryRepository<Category>
   public async Task<IEnumerable<Category>> GetAll() => 
     await _context.Categories.ToListAsync();
 
+  public async Task<IEnumerable<Category>> GetWithTask()
+  {
+    return await _context.Categories.Include(p => p.Tasks).ToListAsync();
+  }
+
   public async Task<IEnumerable<Category>> GetParents()
   {
     return await _context.Categories.Where(c => c.ParentId == null).ToListAsync();
